@@ -1,0 +1,98 @@
+create a database in phpmyadmin 'ShoeStore'
+
+
+CREATE TABLE `BrandsTbl` (
+    `BrandId`   INT            AUTO_INCREMENT NOT NULL,
+    `BrandName` TEXT NULL,
+    PRIMARY KEY (`BrandId`)
+);
+
+CREATE TABLE `CategoriesTbl` (
+    `CategoryId`   INT            AUTO_INCREMENT NOT NULL,
+    `CategoryName` TEXT NULL,
+    PRIMARY KEY (`CategoryId`)
+);
+
+CREATE TABLE `ProductDataTbl` (
+    `ProductId`           INT            AUTO_INCREMENT NOT NULL,
+    `ProductName`         TEXT NULL,
+    `ProductPrice`        DECIMAL(19,4) NULL,
+    `ProductSellingPrice` DECIMAL(19,4) NULL,
+    `ProductStock`        INT            NULL,
+    `ProductDetails`      TEXT NULL,
+    `ProductDescription`  TEXT NULL,
+    `ProductHighlight1`   TEXT NULL,
+    `ProductHighlight2`   TEXT NULL,
+    `30DaysReturn`        INT            NULL,
+    `FreeDelivery`        INT            NULL,
+    `CashOnDelivery`      INT            NULL,
+    `BrandId`             INT            NULL,
+    `CategoryId`          INT            NULL,
+    PRIMARY KEY (`ProductId`),
+    CONSTRAINT `FK_ProductDataTbl_BrandsTbl` FOREIGN KEY (`BrandId`) REFERENCES `BrandsTbl` (`BrandId`),
+    CONSTRAINT `FK_ProductDataTbl_CategoriesTbl` FOREIGN KEY (`CategoryId`) REFERENCES `CategoriesTbl` (`CategoryId`)
+);
+
+CREATE TABLE `ProductDeliveryTbl` (
+    `DeliveryId`      INT            AUTO_INCREMENT NOT NULL,
+    `ProductId`       INT            NULL,
+    `DateTime`        DATETIME       NULL,
+    `UserName`        TEXT NULL,
+    `CustomerAddress` TEXT NULL,
+    `CustomerPinCode` TEXT NULL,
+    `CustomerMoNo`    TEXT NULL,
+    `CustomerName`    TEXT NULL,
+    `PaymentMode`     TEXT NULL,
+    `Size` TEXT NOT NULL,
+    PRIMARY KEY (`DeliveryId`)
+);
+
+CREATE TABLE `ProductImageTbl` (
+    `ImageId`        INT            AUTO_INCREMENT NOT NULL,
+    `ProductId`      INT            NULL,
+    `ImageName`      TEXT NULL,
+    `ImageExtension` TEXT NULL,
+    PRIMARY KEY (`ImageId`),
+    CONSTRAINT `FK_ProductImageTbl_ProductDataTbl` FOREIGN KEY (`ProductId`) REFERENCES `ProductDataTbl` (`ProductId`)
+);
+
+
+
+CREATE TABLE `UserCartTbl` (
+    `CartId`    INT            AUTO_INCREMENT NOT NULL,
+    `ProductId` INT            NULL,
+    `DateTime`  DATETIME       NULL,
+    `Size` TEXT NOT NULL,
+    `UserName`  TEXT NULL,
+    PRIMARY KEY (`CartId`),
+    CONSTRAINT `FK_UserCartTbl_ProductDataTbl` FOREIGN KEY (`ProductId`) REFERENCES `ProductDataTbl` (`ProductId`)
+);
+
+CREATE TABLE `UserDataTbl` (
+    `UserId`          INT            AUTO_INCREMENT NOT NULL,
+    `UserName`        TEXT NULL,
+    `Password`        TEXT NULL,
+    `ConfirmPassword` TEXT NULL,
+    `UserType`        TEXT NULL,
+    `Email`    TEXT NULL,
+    PRIMARY KEY (`UserId`)
+);
+CREATE TABLE FeedbackTbl (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE `UserActivityTbl` (
+    `ActivityId`     INT            AUTO_INCREMENT NOT NULL,
+    `UserId`         INT            NOT NULL,
+    `ProductId`      INT            NULL,
+    `ActivityType`   TEXT           NOT NULL,   -- e.g., 'view', 'add_to_cart', 'purchase', etc.
+    `ActivityDate`   DATETIME       NOT NULL,   -- Timestamp of when the activity happened
+    `Quantity`       INT            NULL,       -- Quantity of the product if it's a purchase or cart addition
+    `AmountSpent`    DECIMAL(19,4)  NULL,       -- Amount spent on the activity (relevant for purchase)
+    PRIMARY KEY (`ActivityId`),
+    CONSTRAINT `FK_UserActivityTbl_UserDataTbl` FOREIGN KEY (`UserId`) REFERENCES `UserDataTbl` (`UserId`),
+    CONSTRAINT `FK_UserActivityTbl_ProductDataTbl` FOREIGN KEY (`ProductId`) REFERENCES `ProductDataTbl` (`ProductId`)
+);
